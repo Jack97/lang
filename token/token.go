@@ -12,6 +12,9 @@ const (
 	SUB
 	MUL
 	DIV
+
+	LPAREN
+	RPAREN
 )
 
 var tokens = [...]string{
@@ -24,6 +27,9 @@ var tokens = [...]string{
 	SUB: "-",
 	MUL: "*",
 	DIV: "/",
+
+	LPAREN: "(",
+	RPAREN: ")",
 }
 
 func (tok Token) String() string {

@@ -70,6 +70,10 @@ func (s *Scanner) Scan() (tok token.Token, pos int, lit string) {
 			tok = token.MUL
 		case '/':
 			tok = token.DIV
+		case '(':
+			tok = token.LPAREN
+		case ')':
+			tok = token.RPAREN
 		default:
 			tok, lit = token.ILLEGAL, string(s.char)
 			s.error(pos, fmt.Sprintf("illegal character %#U", s.char))

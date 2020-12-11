@@ -7,15 +7,21 @@ func Print(n Node) {
 }
 
 func print(n Node, indent string) {
-	switch v := n.(type) {
+	switch x := n.(type) {
 	case *BinaryExpr:
-		fmt.Println(indent + "BinaryExpr: " + v.OpKind.String())
+		fmt.Println(indent + "BinaryExpr [" + x.OpKind.String() + "]:")
 
 		indent += "    "
 
-		print(v.L, indent)
-		print(v.R, indent)
+		print(x.L, indent)
+		print(x.R, indent)
 	case *LiteralExpr:
-		fmt.Println(indent + "LiteralExpr: " + v.Val)
+		fmt.Println(indent + "LiteralExpr [" + x.Val + "]:")
+	case *ParenExpr:
+		fmt.Println(indent + "ParenExpr:")
+
+		indent += "    "
+
+		print(x.Expr, indent)
 	}
 }

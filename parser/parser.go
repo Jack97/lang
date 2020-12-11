@@ -10,16 +10,15 @@ import (
 
 type Parser struct {
 	scanner scanner.Scanner
-	Errors  ErrorList
-
-	tok token.Token
-	pos int
-	lit string
+	errors  ErrorList
+	tok     token.Token
+	pos     int
+	lit     string
 }
 
 func (p *Parser) Init(src string) {
 	eh := func(pos int, msg string) {
-		p.Errors.Add(pos, msg)
+		p.errors.Add(pos, msg)
 	}
 
 	p.scanner.Init(src, eh)
@@ -32,7 +31,7 @@ func (p *Parser) next() {
 }
 
 func (p *Parser) error(pos int, msg string) {
-	p.Errors.Add(pos, msg)
+	p.errors.Add(pos, msg)
 }
 
 func (p *Parser) Parse() ast.Node {
@@ -95,6 +94,24 @@ func (p *Parser) parsePrimaryExpr() ast.Expr {
 	tok, pos, lit := p.tok, p.pos, p.lit
 
 	p.next()
+
+	if tok == token.LPAREN {
+		expr := p.parseExpr()
+
+		if p.tok != token.RPAREN {
+			p.error(pos, fmt.Sprintf("expected '%s', got '%s'", token.RPAREN, p.tok))
+		}
+
+		rparenPos := p.pos
+
+		p.next()
+
+		return &ast.ParenExpr{
+			LparenPos: pos,
+			Expr:      expr,
+			RparenPos: rparenPos,
+		}
+	}
 
 	if tok == token.INT {
 		return &ast.LiteralExpr{
