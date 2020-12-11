@@ -104,7 +104,7 @@ func (p *Parser) parsePrimaryExpr() ast.Expr {
 		}
 	}
 
-	p.error(p.pos, fmt.Sprintf("expected operand, got '%s'", p.tok))
+	p.error(pos, fmt.Sprintf("expected operand, got '%s'", p.tok))
 
 	return &ast.BadExpr{
 		FromPos: pos,

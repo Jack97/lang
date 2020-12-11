@@ -57,8 +57,7 @@ func (s *Scanner) Scan() (tok token.Token, pos int, lit string) {
 			s.next()
 		}
 
-		tok = token.INT
-		lit = s.src[pos:s.pos]
+		tok, lit = token.INT, s.src[pos:s.pos]
 	} else {
 		switch s.char {
 		case -1:
@@ -72,8 +71,7 @@ func (s *Scanner) Scan() (tok token.Token, pos int, lit string) {
 		case '/':
 			tok = token.DIV
 		default:
-			tok = token.ILLEGAL
-			lit = string(s.char)
+			tok, lit = token.ILLEGAL, string(s.char)
 			s.error(pos, fmt.Sprintf("illegal character %#U", s.char))
 		}
 
