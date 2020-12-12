@@ -45,39 +45,31 @@ func (p *Parser) Parse() ast.Node {
 }
 
 func (p *Parser) parseExpr() ast.Expr {
-	return p.parseTermExpr()
+	return p.parseBinaryExpr(0)
 }
 
-func (p *Parser) parseTermExpr() ast.Expr {
-	left := p.parseFactorExpr()
-
-	for p.tok == token.PLUS || p.tok == token.MINUS {
-		opKind, opPos := p.tok, p.pos
-
-		p.next()
-
-		right := p.parseFactorExpr()
-
-		left = &ast.BinaryExpr{
-			L:      left,
-			OpKind: opKind,
-			OpPos:  opPos,
-			R:      right,
-		}
-	}
-
-	return left
-}
-
-func (p *Parser) parseFactorExpr() ast.Expr {
+func (p *Parser) parseBinaryExpr(prevPrec int) ast.Expr {
 	left := p.parsePrimaryExpr()
 
-	for p.tok == token.STAR || p.tok == token.SLASH {
+	for {
 		opKind, opPos := p.tok, p.pos
+
+		prec := 0
+
+		switch opKind {
+		case token.STAR, token.SLASH:
+			prec = 2
+		case token.PLUS, token.MINUS:
+			prec = 1
+		}
+
+		if prec == 0 || prec <= prevPrec {
+			return left
+		}
 
 		p.next()
 
-		right := p.parsePrimaryExpr()
+		right := p.parseBinaryExpr(prec)
 
 		left = &ast.BinaryExpr{
 			L:      left,
@@ -86,8 +78,6 @@ func (p *Parser) parseFactorExpr() ast.Expr {
 			R:      right,
 		}
 	}
-
-	return left
 }
 
 func (p *Parser) parsePrimaryExpr() ast.Expr {
