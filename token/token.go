@@ -8,10 +8,10 @@ const (
 
 	INT
 
-	ADD
-	SUB
-	MUL
-	DIV
+	PLUS
+	MINUS
+	STAR
+	SLASH
 
 	LPAREN
 	RPAREN
@@ -23,10 +23,10 @@ var tokens = [...]string{
 
 	INT: "INT",
 
-	ADD: "+",
-	SUB: "-",
-	MUL: "*",
-	DIV: "/",
+	PLUS:  "+",
+	MINUS: "-",
+	STAR:  "*",
+	SLASH: "/",
 
 	LPAREN: "(",
 	RPAREN: ")",

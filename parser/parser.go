@@ -51,7 +51,7 @@ func (p *Parser) parseExpr() ast.Expr {
 func (p *Parser) parseTermExpr() ast.Expr {
 	left := p.parseFactorExpr()
 
-	for p.tok == token.ADD || p.tok == token.SUB {
+	for p.tok == token.PLUS || p.tok == token.MINUS {
 		opKind, opPos := p.tok, p.pos
 
 		p.next()
@@ -72,7 +72,7 @@ func (p *Parser) parseTermExpr() ast.Expr {
 func (p *Parser) parseFactorExpr() ast.Expr {
 	left := p.parsePrimaryExpr()
 
-	for p.tok == token.MUL || p.tok == token.DIV {
+	for p.tok == token.STAR || p.tok == token.SLASH {
 		opKind, opPos := p.tok, p.pos
 
 		p.next()

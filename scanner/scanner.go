@@ -63,13 +63,13 @@ func (s *Scanner) Scan() (tok token.Token, pos int, lit string) {
 		case -1:
 			tok = token.EOF
 		case '+':
-			tok = token.ADD
+			tok = token.PLUS
 		case '-':
-			tok = token.SUB
+			tok = token.MINUS
 		case '*':
-			tok = token.MUL
+			tok = token.STAR
 		case '/':
-			tok = token.DIV
+			tok = token.SLASH
 		case '(':
 			tok = token.LPAREN
 		case ')':
