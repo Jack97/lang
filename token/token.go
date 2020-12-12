@@ -7,6 +7,7 @@ const (
 	EOF
 
 	INT
+	FLOAT
 
 	PLUS
 	MINUS
@@ -21,7 +22,8 @@ var tokens = [...]string{
 	ILLEGAL: "ILLEGAL",
 	EOF:     "EOF",
 
-	INT: "INT",
+	INT:   "INT",
+	FLOAT: "FLOAT",
 
 	PLUS:  "+",
 	MINUS: "-",

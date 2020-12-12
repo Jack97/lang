@@ -113,7 +113,7 @@ func (p *Parser) parsePrimaryExpr() ast.Expr {
 		}
 	}
 
-	if tok == token.INT {
+	if tok == token.INT || tok == token.FLOAT {
 		return &ast.LiteralExpr{
 			Kind:   tok,
 			ValPos: pos,

@@ -33,6 +33,16 @@ func (s *Scanner) next() {
 	}
 }
 
+func (s *Scanner) peek() rune {
+	pos := s.pos + 1
+
+	if pos >= len(s.src) {
+		return -1
+	}
+
+	return rune(s.src[pos])
+}
+
 func (s *Scanner) error(pos int, msg string) {
 	if s.eh != nil {
 		s.eh(pos, msg)
@@ -45,21 +55,46 @@ func (s *Scanner) skipWhitespace() {
 	}
 }
 
+func (s *Scanner) scanDigits() {
+	for isDigit(s.char) {
+		s.next()
+	}
+}
+
+func (s *Scanner) scanNumber() (token.Token, string) {
+	pos := s.pos
+	tok := token.ILLEGAL
+
+	// integer part
+	if s.char != '.' {
+		tok = token.INT
+		s.scanDigits()
+	}
+
+	// fractional part
+	if s.char == '.' && isDigit(s.peek()) {
+		tok = token.FLOAT
+		s.next()
+		s.scanDigits()
+	}
+
+	lit := s.src[pos:s.pos]
+
+	return tok, lit
+}
+
 func (s *Scanner) Scan() (tok token.Token, pos int, lit string) {
 	s.skipWhitespace()
 
 	pos = s.pos
 
-	if isDecimal(s.char) {
-		s.next()
+	switch char := s.char; {
+	case isDigit(char) || char == '.' && isDigit(s.peek()):
+		tok, lit = s.scanNumber()
+	default:
+		s.next() // make progress
 
-		for isDecimal(s.char) {
-			s.next()
-		}
-
-		tok, lit = token.INT, s.src[pos:s.pos]
-	} else {
-		switch s.char {
+		switch char {
 		case -1:
 			tok = token.EOF
 		case '+':
@@ -78,13 +113,11 @@ func (s *Scanner) Scan() (tok token.Token, pos int, lit string) {
 			tok, lit = token.ILLEGAL, string(s.char)
 			s.error(pos, fmt.Sprintf("illegal character %#U", s.char))
 		}
-
-		s.next()
 	}
 
 	return
 }
 
-func isDecimal(char rune) bool {
+func isDigit(char rune) bool {
 	return '0' <= char && char <= '9'
 }
