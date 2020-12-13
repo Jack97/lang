@@ -37,3 +37,14 @@ var tokens = [...]string{
 func (tok Token) String() string {
 	return tokens[tok]
 }
+
+func (tok Token) Precedence() int {
+	switch tok {
+	case STAR, SLASH:
+		return 2
+	case PLUS, MINUS:
+		return 1
+	default:
+		return 0 // not a binary operator
+	}
+}

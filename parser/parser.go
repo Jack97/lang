@@ -58,14 +58,7 @@ func (p *Parser) parseBinaryExpr(prevPrec int) ast.Expr {
 	for {
 		opKind, opPos := p.tok, p.pos
 
-		prec := 0
-
-		switch opKind {
-		case token.STAR, token.SLASH:
-			prec = 2
-		case token.PLUS, token.MINUS:
-			prec = 1
-		}
+		prec := opKind.Precedence()
 
 		if prec == 0 || prec <= prevPrec {
 			return left
@@ -115,6 +108,8 @@ func (p *Parser) parsePrimaryExpr() ast.Expr {
 	}
 
 	p.error(pos, fmt.Sprintf("expected operand, got '%s'", tok))
+
+	// todo: advance to the end of the expression
 
 	return &ast.BadExpr{
 		FromPos: pos,
