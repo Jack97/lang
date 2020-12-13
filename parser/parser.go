@@ -52,8 +52,27 @@ func (p *Parser) parseExpr() ast.Expr {
 	return p.parseBinaryExpr(0)
 }
 
+func (p *Parser) parseUnaryExpr() ast.Expr {
+	switch p.tok {
+	case token.PLUS, token.MINUS:
+		opKind, opPos := p.tok, p.pos
+
+		p.next()
+
+		expr := p.parseUnaryExpr()
+
+		return &ast.UnaryExpr{
+			OpKind: opKind,
+			OpPos:  opPos,
+			Expr:   expr,
+		}
+	}
+
+	return p.parsePrimaryExpr()
+}
+
 func (p *Parser) parseBinaryExpr(prevPrec int) ast.Expr {
-	left := p.parsePrimaryExpr()
+	left := p.parseUnaryExpr()
 
 	for {
 		opKind, opPos := p.tok, p.pos
@@ -84,6 +103,7 @@ func (p *Parser) parsePrimaryExpr() ast.Expr {
 
 	if tok == token.LPAREN {
 		expr := p.parseExpr()
+
 		rparenPos := p.pos
 
 		if p.tok != token.RPAREN {

@@ -7,7 +7,7 @@ import (
 
 func main() {
 	var p parser.Parser
-	p.Init("2 * (10.234 + 3) * 10")
+	p.Init("2 * -(10.234 + 3) * 10")
 
 	tree, err := p.Parse()
 
