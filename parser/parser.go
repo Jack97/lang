@@ -34,14 +34,18 @@ func (p *Parser) error(pos int, msg string) {
 	p.errors.Add(pos, msg)
 }
 
-func (p *Parser) Parse() ast.Node {
+func (p *Parser) Parse() (ast.Node, error) {
 	expr := p.parseExpr()
 
 	if p.tok != token.EOF {
 		p.error(p.pos, fmt.Sprintf("expected '%s', got '%s'", token.EOF, p.tok))
 	}
 
-	return expr
+	if len(p.errors) > 0 {
+		return expr, p.errors
+	}
+
+	return expr, nil
 }
 
 func (p *Parser) parseExpr() ast.Expr {
@@ -87,12 +91,11 @@ func (p *Parser) parsePrimaryExpr() ast.Expr {
 
 	if tok == token.LPAREN {
 		expr := p.parseExpr()
+		rparenPos := p.pos
 
 		if p.tok != token.RPAREN {
-			p.error(pos, fmt.Sprintf("expected '%s', got '%s'", token.RPAREN, p.tok))
+			p.error(rparenPos, fmt.Sprintf("expected '%s', got '%s'", token.RPAREN, p.tok))
 		}
-
-		rparenPos := p.pos
 
 		p.next()
 
@@ -111,7 +114,7 @@ func (p *Parser) parsePrimaryExpr() ast.Expr {
 		}
 	}
 
-	p.error(pos, fmt.Sprintf("expected operand, got '%s'", p.tok))
+	p.error(pos, fmt.Sprintf("expected operand, got '%s'", tok))
 
 	return &ast.BadExpr{
 		FromPos: pos,
